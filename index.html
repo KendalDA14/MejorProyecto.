@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        .roue-crantee {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .roue-icon {
+            color: #fff;
+        }
+
+        .fenetre-modale {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+            z-index: 10000;
+            display: none;
+            width: 500px;
+        }
+
+        .fenetre-modale-content {
+            background-color: rgb(255, 255, 255);
+            
+        }
+
+        /* Style pour les boutons */
+        .bouton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .bouton:hover {
+            background-color: #555;
+        }
+        .img {
+            display: flex;
+            justify-content:space-around;
+            width: auto;
+        }
+        /* Style pour l'image */
+        .mon-image {
+            width: 100px;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .fermer-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #ff0000;
+        }
+
+        #question-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        #question-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 80%;
+            text-align: center;
+        }
+        
+        #question-text {
+            margin-bottom: 20px;
+        }
+        
+        #answer-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        #submit-answer {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Estilo para el prompt personalizado */
+        .custom-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            z-index: 10000;
+            width: 300px;
+            text-align: center;
+            display: none;
+        }
+        
+        .custom-prompt h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .custom-prompt input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        
+        .custom-prompt-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .custom-prompt button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .custom-prompt-accept {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .custom-prompt-cancel {
+            background: #f44336;
+            color: white;
+        }
+
+        /* Aumentar el tamaño del ícono del menú de hamburguesa */
+        .hamburger-menu {
+            width: 50px; /* Aumentar el ancho */
+            height: 50px; /* Aumentar la altura */
+            cursor: pointer;
+        }
+
+        /* Ajustar las barras del ícono */
+        .hamburger-menu div {
+            width: 40px; /* Aumentar el ancho de las barras */
+            height: 6px; /* Aumentar el grosor de las barras */
+            background-color: #333; /* Color de las barras */
+            margin: 6px 0; /* Espaciado entre barras */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+
+        /* Estilo del menú desplegable */
+        .hamburger-menu-content {
+            font-size: 18px; /* Aumentar el tamaño del texto */
+            padding: 20px; /* Aumentar el padding */
+            background-color: #f9f9f9; /* Fondo del menú */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para destacar */
+        }
+
+        .bouton-reiniciar {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #FF0000; /* Rojo */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .bouton-reiniciar:hover {
+            background-color: #CC0000; /* Rojo más oscuro al pasar el mouse */
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js"></script>
+    <script src="start.js"></script>
+    <script src="bird.js"></script>
+    <script src="cloud.js"></script>
+    <script src="collision.js"></script>
+    <script src="cactus.js"></script>
+    <script src="dinosaure.js"></script>
+    <script src="moon.js"></script>
+    <script src="ground.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
+
+    <script>
+        function ouvrirFenetreModale() {
+            document.querySelector('.fenetre-modale').style.display = 'block';
+        }
+
+        function fermerFenetreModale() {
+            document.querySelector('.fenetre-modale').style.display = 'none';
+        }
+
+        function toggleMusique() {
+            var musiqueFond = document.getElementById("musiqueFond");
+            if (musiqueFond.paused) {
+                musiqueFond.play();
+            } else {
+                musiqueFond.pause();
+            }
+        }
+
+        function reiniciarJuego() {
+            location.reload(); // Recargar la página
+        }
+    </script>   
+</head>
+
+<body style="overflow-y: hidden; overflow-x: hidden; margin-left: 0; margin-top: 0; zoom: 0.75;">
+    
+    <!-- Musique de fond -->
+    <audio id="musiqueFond" loop>
+        <source src="8bit-music-test.mp3" type="audio/mpeg">
+        Tu navegador no soporta audio HTML.
+    </audio>
+    
+    <!-- Menu options -->
+    <div class="roue-crantee" onclick="ouvrirFenetreModale()">
+        <span class="roue-icon">≡</span>
+    </div>
+    <!-- Fenêtre options -->
+    <div class="fenetre-modale">
+        <div class="fenetre-modale-content">
+            <h2>Opciones</h2>
+            <p>Controles:</p>
+            <div class="img">
+                <img class="mon-image" src="New Piskel.png">
+            </div>
+            <p>Usa la barra espaciadora, las teclas de arriba o abajo para jugar.</p>
+        </div>
+            <div>
+            <!-- Botón de retroalimentación -->
+            <button class="bouton" onclick="mostrarRetroalimentacion()">Retroalimentación</button>
+        </div>
+        <div>
+            <!-- Botón de acerca de -->
+            <button class="bouton" onclick="mostrarAcercaDe()">Acerca de</button>
+        </div>
+        <div>
+            <!-- Botón de instrucciones -->
+            <button class="bouton" onclick="mostrarInstrucciones()">Instrucciones</button>
+        </div>
+        <div>
+            <!-- Botón de reiniciar -->
+            <button class="bouton-reiniciar" onclick="reiniciarJuego()">Reiniciar</button>
+        </div>
+        <div>
+            <button class="fermer-btn" onclick="fermerFenetreModale()">X</button>
+        </div>
+    </div>
+
+    <!-- Modal para retroalimentación -->
+    <div id="retroalimentacion-modal" class="fenetre-modale" style="display: none;">
+        <div class="fenetre-modale-content" style="
+            background: white;
+            padding: 60px; /* Aumentar el padding */
+            border-radius: 15px; /* Bordes redondeados */
+            width: 900px; /* Aumentar el ancho */
+            max-width: 95%;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más destacada */
+        ">
+            <h2 style="font-size: 32px; margin-bottom: 30px;">Retroalimentación</h2>
+            <p style="font-size: 20px; margin-bottom: 30px;">No hay preguntas falladas.</p>
+            <div id="retroalimentacion-content" style="
+                max-height: 500px; /* Limitar la altura máxima */
+                overflow-y: auto; /* Habilitar scroll si es necesario */
+                margin-bottom: 30px;
+            ">
+                <!-- Aquí se mostrarán las preguntas falladas -->
+            </div>
+            <button class="fermer-btn" onclick="cerrarRetroalimentacion()" style="
+                padding: 15px 30px; /* Botón más grande */
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 18px; /* Texto más grande */
+            ">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="acerca-de-modal" class="fenetre-modale" style="display: none;">
+        <div class="fenetre-modale-content" style="
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 600px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        ">
+            <h2 style="font-size: 28px; margin-bottom: 20px;">Acerca de</h2>
+            <h4 style="font-size: 28px; margin-bottom: 20px;">Juego hecho por:</h4>
+            <p style="font-size: 18px; margin-bottom: 10px;">Kendall Josue Viales Berroteran</p>
+            <p style="font-size: 18px; margin-bottom: 10px;">Jesus Daniel Gomez Contreras</p>
+            <p style="font-size: 18px; margin-bottom: 20px;">Kendal Zuñiga Araya</p>
+            <button class="fermer-btn" onclick="cerrarAcercaDe()" style="
+                padding: 10px 20px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            ">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="instrucciones-modal" class="fenetre-modale" style="display: none;">
+        <div class="fenetre-modale-content" style="
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 600px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        ">
+            <h2 style="font-size: 28px; margin-bottom: 20px;">Instrucciones</h2>
+            <p style="font-size: 18px; margin-bottom: 10px;">
+                1. Si mueres, tendrás que responder preguntas para seguir jugando.
+            </p>
+            <p style="font-size: 18px; margin-bottom: 10px;">
+                2. Si se acaban las preguntas y mueres, tendrás que reiniciar el juego.
+            </p>
+            <p style="font-size: 18px; margin-bottom: 20px;">
+                3. Después de morir y responder todas las preguntas, deberás darle al boton de reiniciar en el menu para jugar de nuevo.
+            </p>
+            <button class="fermer-btn" onclick="cerrarInstrucciones()" style="
+                padding: 10px 20px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            ">Cerrar</button>
+        </div>
+    </div>
+
+    <main>
+    </main>
+
+    <div id="custom-prompt" class="custom-prompt">
+        <h3 id="custom-prompt-question"></h3>
+        <input type="text" id="custom-prompt-input" placeholder="Tu respuesta...">
+        <div class="custom-prompt-buttons">
+            <button id="custom-prompt-cancel" class="custom-prompt-cancel">Cancelar</button>
+            <button id="custom-prompt-accept" class="custom-prompt-accept">Aceptar</button>
+        </div>
+    </div>
+
+    <script>
+        // Reemplazo del prompt nativo
+        function showCustomPrompt(question, callback) {
+            const prompt = document.getElementById('custom-prompt');
+            const input = document.getElementById('custom-prompt-input');
+            
+            document.getElementById('custom-prompt-question').textContent = question;
+            input.value = '';
+            prompt.style.display = 'block';
+            input.focus();
+            
+            function handleResponse() {
+                prompt.style.display = 'none';
+                callback(input.value);
+            }
+            
+            // Bloquear controles del juego
+            const originalKeyPressed = window.keyPressed;
+            const originalKeyReleased = window.keyReleased;
+            window.keyPressed = function() {};
+            window.keyReleased = function() {};
+
+            document.getElementById('custom-prompt-accept').onclick = function() {
+                // Restaurar controles
+                window.keyPressed = originalKeyPressed;
+                window.keyReleased = originalKeyReleased;
+                handleResponse();
+            };
+
+            document.getElementById('custom-prompt-cancel').onclick = function() {
+                // Restaurar controles
+                window.keyPressed = originalKeyPressed;
+                window.keyReleased = originalKeyReleased;
+                callback(null);
+                prompt.style.display = 'none';
+            };
+
+            input.onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    // Restaurar controles
+                    window.keyPressed = originalKeyPressed;
+                    window.keyReleased = originalKeyReleased;
+                    handleResponse();
+                }
+            };
+        }
+        
+        // Sobreescribir el prompt nativo
+        window.originalPrompt = window.prompt;
+        window.prompt = function(question) {
+            return new Promise(resolve => {
+                showCustomPrompt(question, resolve);
+            });
+        };
+    </script>
+
+    <script>
+        // Lista para almacenar las preguntas falladas
+        const preguntasFalladas = [];
+
+        function mostrarRetroalimentacion() {
+            const modal = document.getElementById('retroalimentacion-modal');
+            const content = document.getElementById('retroalimentacion-content');
+            content.innerHTML = ''; // Limpiar contenido previo
+
+            if (preguntasFalladas.length === 0) {
+                content.innerHTML = '<p>No hay preguntas falladas.</p>';
+            } else {
+                preguntasFalladas.forEach((pregunta) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.style = `
+                        margin-bottom: 20px;
+                        text-align: center;
+                    `;
+
+                    const questionText = document.createElement('p');
+                    questionText.textContent = `Pregunta: ${pregunta.question}`;
+
+                    const correctAnswer = document.createElement('p');
+                    correctAnswer.textContent = `Respuesta correcta: ${pregunta.answer}`;
+                    correctAnswer.style = `
+                        font-weight: bold;
+                        color: #4CAF50;
+                        margin-top: 10px;
+                    `;
+
+                    // Mostrar todas las imágenes de retroalimentación
+                    const imagesDiv = document.createElement('div');
+                    imagesDiv.style = `
+                        display: flex;
+                        justify-content: center;
+                        gap: 10px;
+                        margin-top: 10px;
+                    `;
+
+                    pregunta.retroImg.forEach((imgSrc) => {
+                        const questionImage = document.createElement('img');
+                        questionImage.src = imgSrc;
+                        questionImage.style = `
+                            width: 45%;
+                            max-height: 250px;
+                            object-fit: contain;
+                        `;
+                        imagesDiv.appendChild(questionImage);
+                    });
+
+                    questionDiv.appendChild(questionText);
+                    questionDiv.appendChild(correctAnswer);
+                    questionDiv.appendChild(imagesDiv);
+                    content.appendChild(questionDiv);
+                });
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function cerrarRetroalimentacion() {
+            const modal = document.getElementById('retroalimentacion-modal');
+            modal.style.display = 'none';
+        }
+
+        function mostrarAcercaDe() {
+            const modal = document.getElementById('acerca-de-modal');
+            modal.style.display = 'block';
+        }
+
+        function cerrarAcercaDe() {
+            const modal = document.getElementById('acerca-de-modal');
+            modal.style.display = 'none';
+        }
+
+        function mostrarInstrucciones() {
+            const modal = document.getElementById('instrucciones-modal');
+            modal.style.display = 'block';
+        }
+
+        function cerrarInstrucciones() {
+            const modal = document.getElementById('instrucciones-modal');
+            modal.style.display = 'none';
+        }
+    </script>
+
+    <script>
+        function mostrarAcercaDe() {
+            const modal = document.getElementById('acerca-de-modal');
+            modal.style.display = 'block';
+        }
+
+        function cerrarAcercaDe() {
+            const modal = document.getElementById('acerca-de-modal');
+            modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
